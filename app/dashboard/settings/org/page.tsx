@@ -21,7 +21,10 @@ export default function Organization() {
     useEffect(() => {
         if (organization) {
             organization.getInvitations().then(response => {
-                setInvitations(response.data)
+                setInvitations(response.data.map(inv => ({
+                    ...inv,
+                    createdAt: inv.createdAt.toISOString()
+                })))
                 setLoading(false)
             }).catch(error => {
                 setError("Error fetching invitations")
