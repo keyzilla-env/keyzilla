@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Copy, Key, Plus, Trash2 } from "lucide-react";
+import { Code, Copy, Key, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner"
 import {
     Select,
@@ -36,6 +36,7 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 import React from "react";
+import { Id } from "@/convex/_generated/dataModel";
 
 
 export default function ProjectPage({ params }: { params: { name: string } }) {
@@ -67,8 +68,8 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
 
     const handleDeleteApiKey = async (apiKeyId: string) => {
         try {
-            await deleteApiKey({ apiKeyId });
-            toast.success("API Key deleted successfully");
+            await deleteApiKey({ apiKeyId: apiKeyId as Id<"apiKeys"> });
+            toast.success("APIKey deleted successfully");
         } catch (error) {
             toast.error("Failed to delete API Key");
         }
@@ -97,7 +98,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl font-semibold flex items-center">
-                                <Key className="mr-2" /> API Keys
+                                <Code className="mr-2" /> API Keys
                             </CardTitle>
 
 

@@ -64,7 +64,7 @@ export default function Home() {
             </h1>
             <Button>see Demo</Button>
           </div>
-          <Herovideo />
+          <Hero />
           <BentoGrid />
         </div>
       </div>
@@ -75,7 +75,7 @@ export default function Home() {
 
 
 
-export function Herovideo() {
+export function Hero() {
   return (
     <section className="max-w-5xl mx-auto h-screen flex flex-col justify-center items-center px-7 lg:px-0 relative">
       <div className="relative rounded-2xl p-1 overflow-hidden">
