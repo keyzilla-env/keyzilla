@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import ModeToggle from '@/components/theme-toggle';
 import { ConvexClientProvider } from "@/lib/covex-client";
 import { ClerkProvider } from "@clerk/nextjs";
-import { siteConfig } from "../../config/site";
+import { siteConfig } from "@/config/site";
 const inter = Inter({ subsets: ["latin"] });
 
 
