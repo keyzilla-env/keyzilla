@@ -27,29 +27,25 @@ export function DashboardBreadcrumb() {
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator>
-                    <Slash />
-                </BreadcrumbSeparator>
-                <BreadcrumbItem>
                     <OrgSwitcher />
                 </BreadcrumbItem>
                 {segments.slice(1).map((segment, index) => {
-                    const href = `/${segments.slice(0, index + 2).join('/').replace(/%20/g, ' ')}`
+                    const href = `/${segments.slice(0, index + 2).map(s => encodeURIComponent(s)).join('/')}`
 
                     const isLast = index === segments.length - 2
 
-                    let displayName = segment
+                    let displayName = decodeURIComponent(segment)
 
                     return (
-                        <React.Fragment key={href}>
+                        <React.Fragment key={href} >
                             <BreadcrumbSeparator>
                                 <Slash className="w-4 h-4" />
                             </BreadcrumbSeparator>
-                            <BreadcrumbItem>
+                            <BreadcrumbItem >
                                 {isLast ? (
-                                    <BreadcrumbPage>{displayName}</BreadcrumbPage>
+                                    <Link href={href}>
+                                        <BreadcrumbPage>{displayName}</BreadcrumbPage>
+                                    </Link>
                                 ) : (
                                     <BreadcrumbLink asChild>
                                         <Link href={href}>{displayName}</Link>
@@ -60,6 +56,7 @@ export function DashboardBreadcrumb() {
                     )
                 })}
             </BreadcrumbList>
+
         </Breadcrumb>
     )
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import ModeToggle from '@/components/theme-toggle';
 import HeroVideoDialog from '@/components/video-dialog';
 import FlickeringGrid from '@/components/flickering-grid';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import BentoGrid from '@/components/bentogrid';
 import { useRouter } from 'next/navigation';
 import { Unauthenticated, useConvexAuth } from 'convex/react';
@@ -38,9 +38,12 @@ export default function Home() {
           <div className="logo text-xl font-bold">Keyzilla</div>
           <nav className="flex items-center space-x-4">
             <SignedOut >
-              <SignInButton mode="modal" signUpForceRedirectUrl="/dashboard">
-                <Button className='bg-gradient-to-br from-indigo-700 via-accent-foreground to-fuchsia-500'>Get Started</Button>
+              <SignInButton mode="modal" signUpForceRedirectUrl="/dashboard" fallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/dashboard">
+                <Button className='bg-gradient-to-br from-indigo-700 via-accent-foreground to-fuchsia-500'>Sign In</Button>
               </SignInButton>
+              <SignUpButton signInFallbackRedirectUrl="/dashboard" mode='modal' fallbackRedirectUrl="/dashboard">
+                <Button className='bg-gradient-to-br from-indigo-700 via-accent-foreground to-fuchsia-500'>Sign Up</Button>
+              </SignUpButton>
             </SignedOut>
             <SignedIn>
               <Button asChild>

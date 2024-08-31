@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Protect, useOrganization, useUser } from '@clerk/nextjs';
+import { Protect, useOrganization, useUser, useAuth } from '@clerk/nextjs';
 import { Organization } from '@clerk/nextjs/server';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -7,10 +7,13 @@ import { Doc } from '@/convex/_generated/dataModel';
 import AddProjectForm from './add-project-form';
 import { format } from 'date-fns';
 import { formatDistanceToNow } from 'date-fns';
-import { Key } from 'lucide-react';
+import { Code, Key } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 
 interface ProjectGridProps {
     projects: Doc<'projects'>[] | undefined;
@@ -25,9 +28,11 @@ export default function ProjectGrid({ projects, searchTerm }: ProjectGridProps) 
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 p-4">
-            {filteredProjects?.map((project: Doc<'projects'>) => (
-                <ProjectCard key={project._id} project={project} />
-            ))}
+            <ErrorBoundary errorComponent={() => <>Error</>}>
+                {filteredProjects?.map((project: Doc<'projects'>) => (
+                    <ProjectCard key={project._id} project={project} />
+                ))}
+            </ErrorBoundary>
         </div>
     );
 }
@@ -37,8 +42,17 @@ interface ProjectCardProps {
 }
 function ProjectCard({ project }: ProjectCardProps) {
     const { organization } = useOrganization();
-
+    const { userId } = useAuth();
     const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = useState(false);
+    const [isAddApiKeyDialogOpen, setIsAddApiKeyDialogOpen] = useState(false);
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.get('addApiKey') === 'true' && project.name === searchParams.get('project')) {
+            setIsAddApiKeyDialogOpen(true);
+        }
+    }, [searchParams, project.name]);
+
     if (!project) {
         return (
             <Protect
@@ -50,6 +64,7 @@ function ProjectCard({ project }: ProjectCardProps) {
                         Add Project
                     </Button>
                     <AddProjectForm
+
                         isOpen={isAddProjectDialogOpen}
                         onClose={() => setIsAddProjectDialogOpen(false)}
                     />
@@ -57,6 +72,11 @@ function ProjectCard({ project }: ProjectCardProps) {
             </Protect>
         );
     }
+
+    const isUpdated = project.createdAt !== project.updatedAt;
+    const dateToShow = isUpdated ? project.updatedAt : project.createdAt;
+    const actionText = isUpdated ? 'Updated' : 'Created';
+
     return (
         <div className={cn(
             "bg-white dark:bg-black p-6 rounded-lg shadow-md",
@@ -87,8 +107,17 @@ function ProjectCard({ project }: ProjectCardProps) {
                         </Link>
                     </div>
                     <div className="flex items-center space-x-2 text-xs font-bold text-emerald-600">
-                        <span>{project.apiKeys.length}</span>
-                        <Key className="w-4 h-4" />
+                        {organization ? (
+                            <Protect
+                                role='org:admin'
+                                fallback={<ApiKeyCount count={project.apiKeys.length} />}
+                            >
+                                <AddApiKey projectName={project.name} />
+                            </Protect>
+                        ) : (
+                            <AddApiKey projectName={project.name} />
+
+                        )}
                     </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -96,8 +125,34 @@ function ProjectCard({ project }: ProjectCardProps) {
                 </p>
             </div>
             <div className="text-xs text-muted-foreground mt-4">
-                Created {formatDistanceToNow(new Date(project._creationTime), { addSuffix: true })}
+                {actionText} {formatDistanceToNow(new Date(dateToShow), { addSuffix: true })}
             </div>
         </div>
+    );
+}
+
+type AddApiKeyProps = {
+    projectName: string
+}
+
+// Update the AddApiKey component
+function AddApiKey({ projectName }: AddApiKeyProps) {
+    return (
+        <Button variant="outline" size="sm" asChild>
+            <Link href={`/dashboard/${projectName}?addApiKey=true`}>
+                <Code className="w-4 h-4 mr-2" />
+                Add API Key
+            </Link>
+        </Button>
+    );
+}
+
+// Add this new component for the API Key dialog
+function ApiKeyCount({ count }: { count: number }) {
+    return (
+        <>
+            <Code className="w-4 h-4" />
+            <span>{count}</span>
+        </>
     );
 }

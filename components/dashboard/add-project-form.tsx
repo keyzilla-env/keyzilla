@@ -25,11 +25,13 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { useOrganization } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { ConvexError } from "convex/values";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be less than 50 characters"),
     description: z.string().min(2, "Description must be at least 2 characters").max(50, "Description must be less than 50 characters"),
-    apiKeys: z.string().min(1, "At least one API key is required"),
 })
 
 interface AddProjectFormProps {
@@ -48,9 +50,23 @@ export default function AddProjectForm({ isOpen, onClose }: AddProjectFormProps)
         defaultValues: {
             name: "",
             description: "",
-            apiKeys: "",
         },
     });
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+                event.preventDefault();
+                onClose(); // This will toggle the dialog
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClose]);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setIsSubmitting(true);
@@ -59,16 +75,19 @@ export default function AddProjectForm({ isOpen, onClose }: AddProjectFormProps)
             await createProject({
                 name: data.name,
                 description: data.description,
-                apiKeys: data.apiKeys.split(',').map(key => key.trim()),
                 organizationId: organization?.id || "",
             });
             form.reset();
             onClose();
-            // Add success message here
-            console.log("Project created successfully");
         } catch (error) {
             console.error("Failed to create project:", error);
-            setSubmitError(`Failed to create project. Please try again. ${error}`);
+            if (error instanceof ConvexError) {
+                setSubmitError(error.data || error.message);
+            } else if (error instanceof Error) {
+                setSubmitError(error.message);
+            } else {
+                setSubmitError("An unexpected error occurred. Please try again.");
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -112,22 +131,6 @@ export default function AddProjectForm({ isOpen, onClose }: AddProjectFormProps)
                                     </FormControl>
                                     <FormDescription>
                                         This is your project description.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="apiKeys"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>API Keys</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Enter your API keys, separated by commas.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>

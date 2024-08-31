@@ -12,10 +12,12 @@ export default defineSchema({
         organizationId: v.optional(v.string()),
         userProfile: v.optional(v.string()),
         userName: v.optional(v.string()),
+        isPublic: v.optional(v.boolean()),
     }),
     apiKeys: defineTable({
         projectId: v.id("projects"),
         apiKey: v.string(),
+        isServer: v.optional(v.boolean()),
         createdAt: v.number(),
         updatedAt: v.number(),
     })

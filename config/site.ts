@@ -1,0 +1,13 @@
+export const siteConfig = {
+    name: "shadcn/ui",
+    url: "https://keyzilla.vercel.app",
+    ogImage: "https://keyzilla.vercel.app/og.jpg",
+    description:
+        "Secure your api keuys and gain access over them with ease",
+    links: {
+        twitter: "https://twitter.com/keyzilla",
+        github: "https://github.com/zaluty/keyzilla",
+    },
+}
+
+export type SiteConfig = typeof siteConfig

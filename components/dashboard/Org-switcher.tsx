@@ -4,7 +4,7 @@ import { useOrganizationList, useUser, useOrganization } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronRight, ChevronsUpDown, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -19,7 +19,7 @@ export const OrgSwitcher = () => {
     const { isLoaded, setActive, userMemberships } = useOrganizationList({
         userMemberships: {
             infinite: false,
-            pageSize: 1,
+            pageSize: 3,
         },
     })
     const { user } = useUser()
@@ -29,6 +29,13 @@ export const OrgSwitcher = () => {
     if (!isLoaded || !user) {
         return <div className="flex items-center justify-center h-10 w-[200px]"><p>Loading...</p></div>
     }
+    const handleOrgClick = (e: React.MouseEvent, orgName: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(false)
+        router.push(`/dashboard/org/${orgName}`);
+    };
+
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -47,7 +54,7 @@ export const OrgSwitcher = () => {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0 ">
+            <PopoverContent className="w-[200px] p-0 " >
                 <ul className="max-h-[300px] overflow-auto space-y-1">
 
                     <li
@@ -66,7 +73,9 @@ export const OrgSwitcher = () => {
                             <AvatarFallback>{user.fullName?.[0] || 'U'}</AvatarFallback>
                         </Avatar>
                         <span>Personal Account</span>
-                        {!organization && <Check className="ml-auto h-4 w-4" />}
+                        {!organization && <> <Check className="ml-auto h-4 w-4" />
+
+                        </>}
                     </li>
                     {userMemberships.data?.map((mem) => (
                         <li
@@ -87,7 +96,17 @@ export const OrgSwitcher = () => {
                                 <AvatarFallback>{mem.organization.name[0]}</AvatarFallback>
                             </Avatar>
                             <span>{mem.organization.name}</span>
-                            {mem.organization.id === organization?.id && <Check className="ml-auto h-4 w-4" />}
+                            {mem.organization.id === organization?.id && (
+                                <div className='flex items-center justify-center ml-auto'>
+                                    <Link
+                                        href={`/dashboard/org/${mem.organization.name}`}
+                                        className="h-4 w-4"
+                                        onClick={(e) => handleOrgClick(e, mem.organization.name)}
+                                    >
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Link>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>

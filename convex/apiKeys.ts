@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
 export const getApiKeys = query({
-    args: { projectId: v.string() },
+    args: { projectId: v.id("projects") },
     handler: async (ctx, args) => {
         if (!args.projectId) return [];
         return await ctx.db
@@ -14,12 +14,12 @@ export const getApiKeys = query({
 });
 
 export const createApiKey = mutation({
-    args: { projectId: v.id("projects") },
+    args: { projectId: v.id("projects"), value: v.string() },
     handler: async (ctx, args) => {
         const now = Date.now();
         return await ctx.db.insert("apiKeys", {
             projectId: args.projectId,
-            apiKey: crypto.randomUUID(),
+            apiKey: args.value,
             createdAt: now,
             updatedAt: now,
         });
