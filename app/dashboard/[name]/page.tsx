@@ -139,14 +139,22 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                             projectId={project._id}
                                             isOpen={isAddApiKeyDialogOpen}
                                             onOpenChange={setIsAddApiKeyDialogOpen}
-                                        />
+                                        >
+                                            <Button>
+                                                Add API key
+                                            </Button>
+                                        </AddApiKey>
                                     </Protect>
                                 ) : (
                                     <AddApiKey
                                         projectId={project._id}
                                         isOpen={isAddApiKeyDialogOpen}
                                         onOpenChange={setIsAddApiKeyDialogOpen}
-                                    />
+                                    >
+                                        <Button>
+                                            Add API key
+                                        </Button>
+                                    </AddApiKey>
                                 )}
                             </CardTitle>
 
@@ -159,6 +167,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                     <TableRow>
                                         <TableHead>API Key</TableHead>
                                         <TableHead>Created At</TableHead>
+                                        <TableHead> Key Type </TableHead>
                                         <TableHead>Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -172,6 +181,9 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                                 <Badge variant="secondary">
                                                     {new Date(apiKey.createdAt).toLocaleString()}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {apiKey.isServer ? <Badge variant="outline">Server</Badge> : <Badge variant="outline">Client</Badge>}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">

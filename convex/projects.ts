@@ -75,7 +75,7 @@ export const createProject = mutation({
  * If the projects are not found, it will return an empty array.
  */
 export const getProjects = query({
-    args: { organizationId: v.optional(v.string()) },
+    args: { organizationId: v.optional(v.string()), enabled: v.optional(v.boolean()) },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
         if (identity === null) {

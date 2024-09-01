@@ -14,7 +14,7 @@ export const getApiKeys = query({
 });
 
 export const createApiKey = mutation({
-    args: { projectId: v.id("projects"), value: v.string() },
+    args: { projectId: v.id("projects"), value: v.string(), isServer: v.optional(v.boolean()) },
     handler: async (ctx, args) => {
         const now = Date.now();
         return await ctx.db.insert("apiKeys", {
@@ -22,6 +22,7 @@ export const createApiKey = mutation({
             apiKey: args.value,
             createdAt: now,
             updatedAt: now,
+            isServer: args.isServer
         });
     }
 });

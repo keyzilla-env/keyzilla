@@ -34,7 +34,6 @@ import { useRouter } from "next/navigation";
 import AddProjectForm from "./add-project-form";
 import { useState } from "react";
 
-type Dropdown = typeof useUser
 
 export function DashboardHeader() {
     const { user } = useUser();
@@ -73,10 +72,10 @@ export function DashboardHeader() {
 }
 
 export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactNode }>) {
-    const { user } = useUser();
+    const { user, isLoaded } = useUser();
     const router = useRouter();
-    const [isAddProjectFormOpen, setIsAddProjectFormOpen] = useState(false);
-
+    const [isAddProjectFormOpen, setIsAddtProjectFormOpen] = useState(false);
+    if (!isLoaded) return
     return (
         <>
             <DropdownMenu>
@@ -109,7 +108,7 @@ export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactN
                             <Users className="mr-2 h-4 w-4" />
                             <span>Team</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setIsAddProjectFormOpen(true)}>
+                        <DropdownMenuItem onClick={() => setIsAddtProjectFormOpen(true)}>
                             <Plus className="mr-2 h-4 w-4" />
                             <span>New Project</span>
                             <DropdownMenuShortcut>⌘N</DropdownMenuShortcut>
@@ -140,9 +139,11 @@ export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactN
             {isAddProjectFormOpen && (
                 <AddProjectForm
                     isOpen={isAddProjectFormOpen}
-                    onClose={() => setIsAddProjectFormOpen(false)}
+                    onClose={() => setIsAddtProjectFormOpen(false)}
                 />
             )}
         </>
     )
 }
+
+
