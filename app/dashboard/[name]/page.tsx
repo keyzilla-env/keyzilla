@@ -215,13 +215,22 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleEditApiKey(apiKey._id)}
+                          <Protect
+                            condition={(has) =>
+                              has({
+                                permission: "org:sys_memberships:manage",
+                              }) || !organization
+                            }
+                            fallback={<></>}
                           >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleEditApiKey(apiKey._id)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </Protect>
                         </div>
                       </TableCell>
                     </TableRow>

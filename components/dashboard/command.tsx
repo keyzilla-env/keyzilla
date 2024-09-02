@@ -1,167 +1,219 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
-    Calculator,
-    Calendar,
-    CreditCard,
-    Settings,
-    Smile,
-    User,
-    Sun,
-    Moon,
-    Plus,
-    LogOut,
-    Home,
-    FolderPlus,
-    Key,
-    HelpCircle,
-    Code,
-} from "lucide-react"
+  Calculator,
+  Calendar,
+  CreditCard,
+  Settings,
+  Smile,
+  User,
+  Sun,
+  Moon,
+  Plus,
+  LogOut,
+  Home,
+  FolderPlus,
+  Key,
+  HelpCircle,
+  Code,
+} from "lucide-react";
 
 import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-    CommandSeparator,
-    CommandShortcut,
-} from "@/components/ui/command"
-import { useTheme } from "next-themes"
-import { useRouter } from "next/navigation"
-import { SignOutButton, useOrganization, useUser } from "@clerk/nextjs"
-import { useMutation, useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { AddApiKey } from "./add-api-key"
-import AddProjectForm from "./add-project-form"
-import { useParams } from 'next/navigation'
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+import {
+  Protect,
+  SignOutButton,
+  useOrganization,
+  useUser,
+} from "@clerk/nextjs";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { AddApiKey } from "./add-api-key";
+import AddProjectForm from "./add-project-form";
+import { useParams } from "next/navigation";
 
 export function CommandDialogs() {
-    const [open, setOpen] = React.useState(false)
-    const { setTheme, theme } = useTheme()
-    const router = useRouter()
-    const { user } = useUser()
-    const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = React.useState(false)
-    const [isAddApiKeyDialogOpen, setIsAddApiKeyDialogOpen] = React.useState(false)
-    const createProject = useMutation(api.projects.createProject)
-    const { organization } = useOrganization()
-    const projects = useQuery(api.projects.getProjects, { organizationId: organization?.id || "" })
-    React.useEffect(() => {
-        const down = (e: KeyboardEvent) => {
-            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-                e.preventDefault()
-                setOpen((open) => !open)
-            }
-        }
+  const [open, setOpen] = React.useState(false);
+  const { setTheme, theme } = useTheme();
+  const router = useRouter();
+  const { user } = useUser();
+  const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] =
+    React.useState(false);
+  const [isAddApiKeyDialogOpen, setIsAddApiKeyDialogOpen] =
+    React.useState(false);
+  const createProject = useMutation(api.projects.createProject);
+  const { organization } = useOrganization();
+  const projects = useQuery(api.projects.getProjects, {
+    organizationId: organization?.id || "",
+  });
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
 
-        document.addEventListener("keydown", down)
-        return () => document.removeEventListener("keydown", down)
-    }, [])
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
-    const toggleTheme = () => {
-        setTheme(theme === "light" ? "dark" : "light")
-        setOpen(false)
-    }
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+    setOpen(false);
+  };
 
-    const handleAddProject = async () => {
-        setOpen(false)
-        setIsAddProjectDialogOpen(true)
-    }
+  const handleAddProject = async () => {
+    setOpen(false);
+    setIsAddProjectDialogOpen(true);
+  };
 
-    const handleAddApiKey = () => {
-        setOpen(false)
-        setIsAddApiKeyDialogOpen(true)
-    }
+  const handleAddApiKey = () => {
+    setOpen(false);
+    setIsAddApiKeyDialogOpen(true);
+  };
 
-    return (
-        <>
-            <CommandDialog open={open} onOpenChange={setOpen}>
-                <CommandInput placeholder="Type a command or search..." />
-                <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="Navigation">
-                        <CommandItem onSelect={() => { router.push("/dashboard"), setOpen(false) }}>
-                            <Home className="mr-2 h-4 w-4" />
-                            <span>Dashboard</span>
-                        </CommandItem>
-                        <CommandItem onSelect={() => { router.push("/dashboard/settings"), setOpen(false) }}>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Settings</span>
-                            <CommandShortcut>⌘S</CommandShortcut>
-                        </CommandItem>
-                    </CommandGroup>
-                    <CommandSeparator />
-                    <CommandGroup heading="Projects">
-                        {projects?.map((project) => (
-                            <CommandItem key={project._id} onSelect={() => { router.push(`/dashboard/${project.name}`); setOpen(false); }}>
-                                <FolderPlus className="mr-2 h-4 w-4" />
-                                <span>{project.name}</span>
-                            </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    <CommandGroup heading="Actions">
-                        <CommandItem onSelect={handleAddProject}>
-                            <FolderPlus className="mr-2 h-4 w-4" />
-                            <span>Add Project</span>
-                            <CommandShortcut>⌘N</CommandShortcut>
-                        </CommandItem>
-                        <CommandItem onSelect={handleAddApiKey}>
-                            <Code className="mr-2 h-4 w-4" />
-                            <span>Add API Key</span>
-                        </CommandItem>
-                        <CommandItem onSelect={toggleTheme}>
-                            {theme === "light" ? (
-                                <Moon className="mr-2 h-4 w-4" />
-                            ) : (
-                                <Sun className="mr-2 h-4 w-4" />
-                            )}
-                            <span>Toggle Theme</span>
-                            <CommandShortcut>⌘T</CommandShortcut>
-                        </CommandItem>
-                    </CommandGroup>
-                    <CommandSeparator />
-                    <CommandGroup heading="Account">
-                        <CommandItem onSelect={() => { router.push("/dashboard/settings/profile"), setOpen(false) }}>
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                            <CommandShortcut>⌘P</CommandShortcut>
-                        </CommandItem>
-                        <CommandItem onSelect={() => { router.push("/dashboard/settings/billing"), setOpen(false) }}>
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            <span>Billing</span>
-                            <CommandShortcut>⌘B</CommandShortcut>
-                        </CommandItem>
-                        <CommandItem onSelect={() => router.push("/support")}>
-                            <HelpCircle className="mr-2 h-4 w-4" />
-                            <span>Support</span>
-                        </CommandItem>
-                        <CommandItem>
-                            <Logout />
-                        </CommandItem>
-                    </CommandGroup>
-                </CommandList>
-            </CommandDialog>
-            {/* You would need to implement AddProjectForm and AddApiKeyForm components */}
-            <AddProjectForm isOpen={isAddProjectDialogOpen} onClose={() => setIsAddProjectDialogOpen(false)} />
-            <AddApiKey
-                isFromCommand
-                projectId={projects?.[0]?._id}
-                isOpen={isAddApiKeyDialogOpen}
-                onOpenChange={setIsAddApiKeyDialogOpen}
+  return (
+    <>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Navigation">
+            <CommandItem
+              onSelect={() => {
+                router.push("/dashboard"), setOpen(false);
+              }}
             >
-                <></>
-            </AddApiKey>
-        </>
-    )
+              <Home className="mr-2 h-4 w-4" />
+              <span>Dashboard</span>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                router.push("/dashboard/settings"), setOpen(false);
+              }}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Projects">
+            {projects?.map((project) => (
+              <CommandItem
+                key={project._id}
+                onSelect={() => {
+                  router.push(`/dashboard/${project.name}`);
+                  setOpen(false);
+                }}
+              >
+                <FolderPlus className="mr-2 h-4 w-4" />
+                <span>{project.name}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Actions">
+            <Protect
+              condition={(has) =>
+                has({ permission: "org:sys_memberships:manage" }) ||
+                !organization
+              }
+              fallback={<></>}
+            >
+              <CommandItem onSelect={handleAddProject}>
+                <FolderPlus className="mr-2 h-4 w-4" />
+                <span>Add Project</span>
+                <CommandShortcut>⌘N</CommandShortcut>
+              </CommandItem>
+            </Protect>
+            <Protect
+              condition={(has) =>
+                has({ permission: "org:sys_memberships:manage" }) ||
+                !organization
+              }
+              fallback={<></>}
+            >
+              <CommandItem onSelect={handleAddApiKey}>
+                <Code className="mr-2 h-4 w-4" />
+                <span>Add API Key</span>
+              </CommandItem>
+            </Protect>
+            <CommandItem onSelect={toggleTheme}>
+              {theme === "light" ? (
+                <Moon className="mr-2 h-4 w-4" />
+              ) : (
+                <Sun className="mr-2 h-4 w-4" />
+              )}
+              <span>Toggle Theme</span>
+              <CommandShortcut>⌘T</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Account">
+            <CommandItem
+              onSelect={() => {
+                router.push("/dashboard/settings/profile"), setOpen(false);
+              }}
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+              <CommandShortcut>⌘P</CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                router.push("/dashboard/settings/billing"), setOpen(false);
+              }}
+            >
+              <CreditCard className="mr-2 h-4 w-4" />
+              <span>Billing</span>
+              <CommandShortcut>⌘B</CommandShortcut>
+            </CommandItem>
+            <CommandItem onSelect={() => router.push("/support")}>
+              <HelpCircle className="mr-2 h-4 w-4" />
+              <span>Support</span>
+            </CommandItem>
+            <CommandItem>
+              <Logout />
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+      {/* You would need to implement AddProjectForm and AddApiKeyForm components */}
+      <AddProjectForm
+        isOpen={isAddProjectDialogOpen}
+        onClose={() => setIsAddProjectDialogOpen(false)}
+      />
+      <AddApiKey
+        isFromCommand
+        projectId={projects?.[0]?._id}
+        isOpen={isAddApiKeyDialogOpen}
+        onOpenChange={setIsAddApiKeyDialogOpen}
+      >
+        <></>
+      </AddApiKey>
+    </>
+  );
 }
 
 function Logout() {
-    return <SignOutButton redirectUrl="/">
-        <>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Sign Out</span>
-        </>
+  return (
+    <SignOutButton redirectUrl="/">
+      <>
+        <LogOut className="mr-2 h-4 w-4" />
+        <span>Sign Out</span>
+      </>
     </SignOutButton>
+  );
 }
