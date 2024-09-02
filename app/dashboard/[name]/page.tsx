@@ -112,11 +112,15 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
   console.log(project);
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <Card className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
-        <CardHeader className="flex flex-col gap-y-2">
-          <CardTitle className="text-3xl font-bold">{project.name}</CardTitle>
-          <ImportantNotice />
-          <p className="text-lg opacity-80">{project.description}</p>
+      <Card className="bg-card text-card-foreground">
+        <CardHeader className="flex flex-col gap-y-4 p-6 bg-card text-card-foreground rounded-lg shadow-lg">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-4xl font-extrabold">
+              {project.name}
+            </CardTitle>
+            <ImportantNotice />
+          </div>
+          <p className="text-lg opacity-90">{project.description}</p>
         </CardHeader>
       </Card>
 

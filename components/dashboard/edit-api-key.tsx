@@ -91,90 +91,81 @@ export default function EditApiKey({
   };
 
   return (
-    <Protect
-      condition={(has) =>
-        has({ permission: "org:sys_memberships:manage" }) || !organization
-      }
-      fallback={<></>}
-    >
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="p-6">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">
-              Edit API Key
-            </DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleUpdateApiKey)}
-              className="space-y-4"
-            >
-              <FormField
-                control={form.control}
-                name="apiKeyValue"
-                render={({ field }) => (
-                  <FormItem>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="p-6">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold">
+            Edit API Key
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleUpdateApiKey)}
+            className="space-y-4"
+          >
+            <FormField
+              control={form.control}
+              name="apiKeyValue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">API Key</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Enter new API key value"
+                      className="mt-1"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isServer"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center space-x-2">
                     <FormLabel className="text-sm font-medium">
-                      API Key
+                      Server Key
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter new API key value"
-                        className="mt-1"
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="isServer"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center space-x-2">
-                      <FormLabel className="text-sm font-medium">
-                        Server Key
-                      </FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <SwitchTooltip />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-fulle">
-                Update API Key
+                    <SwitchTooltip />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-fulle">
+              Update API Key
+            </Button>
+          </form>
+        </Form>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Danger Zone</AlertTitle>
+          <AlertDescription>
+            Deleting this project will permanently remove all the following api
+            key
+            {apiKeyName}
+            <div className="mt-3 flex justify-end items-end">
+              <Button
+                variant="destructive"
+                onClick={handleDeleteApiKey}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete Project"}
               </Button>
-            </form>
-          </Form>
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Danger Zone</AlertTitle>
-            <AlertDescription>
-              Deleting this project will permanently remove all the following
-              api key
-              {apiKeyName}
-              <div className="mt-3 flex justify-end items-end">
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteApiKey}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? "Deleting..." : "Delete Project"}
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
-        </DialogContent>
-      </Dialog>
-    </Protect>
+            </div>
+          </AlertDescription>
+        </Alert>
+      </DialogContent>
+    </Dialog>
   );
 }
 

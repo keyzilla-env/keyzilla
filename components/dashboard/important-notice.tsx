@@ -12,6 +12,13 @@ import { CircleHelp } from "lucide-react";
 import { Protect, useOrganization } from "@clerk/nextjs";
 import { InviteMember } from "./invite-user";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import Image from "next/image";
 
 export default function ImportantNotice() {
   const { organization } = useOrganization();
@@ -24,7 +31,7 @@ export default function ImportantNotice() {
       >
         <Dialog>
           <DialogTrigger>
-            <CircleHelp className="text-lg animate-bounce " />
+            <DialogTrigger2 />
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -80,3 +87,20 @@ export const ImportantNoticeText = (organization: Organization) => (
     </div>
   </Protect>
 );
+
+function DialogTrigger2() {
+  return (
+    <>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <CircleHelp className="text-lg  text-red-800 font-bold  " />
+          </TooltipTrigger>
+          <TooltipContent>
+            <>Click me please 🐱</>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </>
+  );
+}
