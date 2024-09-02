@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import AddProjectForm from "./add-project-form";
 import { format } from "date-fns";
 import { formatDistanceToNow } from "date-fns";
@@ -16,9 +16,19 @@ import { Code, Key } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useSearchParams } from "next/navigation";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface ProjectGridProps {
   projects: Doc<"projects">[] | undefined;
@@ -34,7 +44,6 @@ export default function ProjectGrid({
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 p-4">
       <ErrorBoundary errorComponent={() => <>Error</>}>
@@ -146,21 +155,51 @@ function ProjectCard({ project }: ProjectCardProps) {
 
 type AddApiKeyProps = {
   projectName: string;
+  projectId?: Id<"projects">;
 };
 
 // Update the AddApiKey component
-function AddApiKey({ projectName }: AddApiKeyProps) {
+function AddApiKey({ projectName, projectId }: AddApiKeyProps) {
+  const router = useRouter();
+  const deleteProject = useMutation(api.projects.deleteProjectById);
+  const handleDeleteProject = async () => {
+    await deleteProject({ id: projectId as Id<"projects"> });
+    router.push("/dashboard");
+  };
   return (
-    <Button variant="outline" size="sm" asChild>
-      <Link href={`/dashboard/${projectName}?addApiKey=true`}>
-        <Code className="w-4 h-4 mr-2" />
-        Add API Key
-      </Link>
-    </Button>
+    <>
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/dashboard/${projectName}?addApiKey=true`}>
+          <Code className="w-4 h-4 mr-2" />
+          Add API Key
+        </Link>
+      </Button>
+      <Sheet>
+        <SheetTrigger>
+          <Button variant="outline" size="icon" asChild>
+            Qwik access
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Qwik Access</SheetTitle>
+          </SheetHeader>
+          <SheetDescription>
+            <Button
+              variant="destructive"
+              size="icon"
+              asChild
+              onClick={handleDeleteProject}
+            >
+              Delete Project
+            </Button>
+          </SheetDescription>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
 
-// Add this new component for the API Key dialog
 function ApiKeyCount({ count }: { count: number }) {
   return (
     <>
