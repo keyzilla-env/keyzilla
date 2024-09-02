@@ -16,6 +16,7 @@ export default defineSchema({
     }),
     apiKeys: defineTable({
         projectId: v.id("projects"),
+        name: v.optional(v.string()),
         apiKey: v.string(),
         isServer: v.optional(v.boolean()),
         createdAt: v.number(),

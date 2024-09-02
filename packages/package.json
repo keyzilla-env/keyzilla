@@ -1,0 +1,35 @@
+{
+  "name": "keyzilla",
+  "version": "0.0.2",
+  "description": "Secure your API KEYS so commiting them  to a repo won't  scare the shit out of you.",
+  "main": "index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "scripts": {
+    "build": "tsup index.ts --format cjs, esm --dts",
+    "lint": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaluty/keyzilla.git"
+  },
+  "keywords": [
+    "api",
+    "keys",
+    ".Env.local"
+  ],
+  "author": "zaluty (hamza)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zaluty/keyzilla/issues"
+  },
+  "homepage": "https://github.com/zaluty/keyzilla#readme",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "assemblyai": "^4.6.1"
+  }
+}

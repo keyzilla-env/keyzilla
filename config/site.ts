@@ -1,5 +1,5 @@
 export const siteConfig = {
-    name: "shadcn/ui",
+    name: "keyzilla",
     url: "https://keyzilla.vercel.app",
     ogImage: "https://keyzilla.vercel.app/og.jpg",
     description:
@@ -7,6 +7,7 @@ export const siteConfig = {
     links: {
         twitter: "https://twitter.com/keyzilla",
         github: "https://github.com/zaluty/keyzilla",
+        npm: "https://www.npmjs.com/package/keyzilla"
     },
 }
 

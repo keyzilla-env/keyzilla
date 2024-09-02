@@ -19,9 +19,10 @@ import { useOrganization } from '@clerk/nextjs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 const formSchema = z.object({
     name: z.string().min(1, 'Name is required'),
-    apiKey: z.string().min(1, 'API Key is required'),
+    apiKey: z.string()
+        .min(1, 'API Key is required')
+        .refine(value => !/\s/.test(value), 'API Key should not contain spaces'),
     isServer: z.boolean()
-
 })
 
 interface AddApiKeyProps {
@@ -64,7 +65,8 @@ export function AddApiKey({ projectId, isOpen, onOpenChange, children, isFromCom
             await createApiKey({
                 projectId: finalProjectId,
                 value: values.apiKey,
-                isServer: values.isServer
+                isServer: values.isServer,
+                name: values.name
             })
             setLoading(false)
             toast.success("API Key created successfully")
@@ -94,11 +96,12 @@ export function AddApiKey({ projectId, isOpen, onOpenChange, children, isFromCom
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="API Key Name" {...field} />
+                                        <Input placeholder="API Key Name" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase().replace(/ /g, "_"))} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
+
                         />
                         <FormField
                             control={form.control}
@@ -118,9 +121,9 @@ export function AddApiKey({ projectId, isOpen, onOpenChange, children, isFromCom
                             name="isServer"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel> Server Key</FormLabel>
+                                    <FormLabel>Server Key</FormLabel>
                                     <FormControl>
-                                        <div className='flex items-center space-x-2 justify-between'>
+                                        <div className="flex items-center justify-between space-x-2">
                                             <Switch
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}

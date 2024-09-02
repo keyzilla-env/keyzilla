@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Bold, Italic, LogOut, Underline, User } from "lucide-react";
+import { Bell, Bold, Italic, KeyboardIcon, KeyIcon, LogOut, Underline, User } from "lucide-react";
 import {
     Cloud,
     CreditCard,
@@ -33,14 +33,16 @@ import { CommandDialogs } from "./command";
 import { useRouter } from "next/navigation";
 import AddProjectForm from "./add-project-form";
 import { useState } from "react";
+import CommandShorcutsDialog from "./command-shortcuts-dialog";
 
 
 export function DashboardHeader() {
     const { user } = useUser();
     const { organization } = useOrganization();
+
+
     const { userMemberships, isLoaded } = useOrganizationList();
     if (!user) return null;
-
 
 
     return (
@@ -68,14 +70,21 @@ export function DashboardHeader() {
                 </Avatar>
             </div>
         </div>
+
     )
 }
 
 export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactNode }>) {
+    const [isCommanadOpen, setisCommanadOpen] = useState(false)
     const { user, isLoaded } = useUser();
     const router = useRouter();
     const [isAddProjectFormOpen, setIsAddtProjectFormOpen] = useState(false);
     if (!isLoaded) return
+
+    const handleCommand = () => {
+        setisCommanadOpen(true)
+    }
+
     return (
         <>
             <DropdownMenu>
@@ -100,6 +109,10 @@ export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactN
                             <Settings className="mr-2 h-4 w-4" />
                             <span>Settings</span>
                             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleCommand} >
+                            <KeyboardIcon className="mr-2 h-4 w-4" />
+                            <span>command shrtcuts</span>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
@@ -142,6 +155,8 @@ export function DropdownMenuDemo({ children }: Readonly<{ children: React.ReactN
                     onClose={() => setIsAddtProjectFormOpen(false)}
                 />
             )}
+            <CommandShorcutsDialog isOpen={isCommanadOpen} onOpenChange={setisCommanadOpen} />
+
         </>
     )
 }

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Code, Copy, Key, Plus, Trash2 } from "lucide-react";
+import { Code, Copy, Key, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner"
 import React from "react";
 import { Id } from "@/convex/_generated/dataModel";
@@ -19,6 +19,8 @@ import Settings from "@/components/dashboard/project/settings";
 import { AddApiKey } from "@/components/dashboard/add-api-key";
 import { useSearchParams } from "next/navigation";
 import { UsageChart } from "@/components/dashboard/project/usage-chart";
+import EditApiKey from "@/components/dashboard/edit-api-key"; // Import EditApiKey
+import { format } from "date-fns";
 
 export const dynamic = 'force-dynamic'
 
@@ -26,14 +28,14 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
     const { organization } = useOrganization();
     const [projectId, setProjectId] = useState<Id<"projects"> | null>(null);
     const [isAddApiKeyDialogOpen, setIsAddApiKeyDialogOpen] = useState(false);
+    const [isEditApiKeyDialogOpen, setIsEditApiKeyDialogOpen] = useState(false); // State for edit dialog
+    const [selectedApiKey, setSelectedApiKey] = useState<Id<"apiKeys"> | null>(null); // State for selected API key
     const searchParams = useSearchParams();
 
     const project = useQuery(api.projects.getProjectByName, {
         name: decodeURIComponent(params.name),
         organizationId: organization?.id || ""
     });
-
-
 
     useEffect(() => {
         if (project) {
@@ -52,6 +54,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
     );
 
     const [newApiKey, setNewApiKey] = useState("");
+    const [newApiKeyName, setNewApiKeyName] = useState("");
     const createApiKey = useMutation(api.apiKeys.createApiKey);
     const deleteApiKey = useMutation(api.apiKeys.deleteApiKey);
 
@@ -65,8 +68,9 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
 
     const handleCreateApiKey = async () => {
         try {
-            await createApiKey({ projectId: project._id, value: newApiKey });
+            await createApiKey({ projectId: project._id, value: newApiKey, name: newApiKeyName });
             setNewApiKey("");
+            setNewApiKeyName("");
             toast.success("API Key created successfully");
         } catch (error) {
             toast.error("Failed to create API Key");
@@ -86,6 +90,12 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
         navigator.clipboard.writeText(text);
         toast.success("Copied to clipboard");
     };
+
+    const handleEditApiKey = (apiKeyId: Id<"apiKeys">) => {
+        setSelectedApiKey(apiKeyId);
+        setIsEditApiKeyDialogOpen(true);
+    };
+
     console.log(project)
     return (
         <div className="container mx-auto py-8 space-y-8">
@@ -93,7 +103,6 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold">{project.name}</CardTitle>
                     <p className="text-lg opacity-80">{project.description}</p>
-
                 </CardHeader>
             </Card>
 
@@ -102,7 +111,6 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                     <TabsTrigger value="api-keys">API Keys</TabsTrigger>
                     <TabsTrigger value="usage">Usage</TabsTrigger>
                     <TabsTrigger value="logs">Logs</TabsTrigger>
-
 
                     {organization ? (
                         <Protect
@@ -157,11 +165,8 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                     </AddApiKey>
                                 )}
                             </CardTitle>
-
-
                         </CardHeader>
                         <CardContent>
-
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -172,14 +177,21 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
+                                    {apiKeys?.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center">
+                                                <p className="text-gray-500">No API keys found add one to get started</p>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
                                     {apiKeys?.map((apiKey) => (
                                         <TableRow key={apiKey._id}>
                                             <TableCell className="font-mono">
-                                                {apiKey.apiKey.slice(0, 8)}...{apiKey.apiKey.slice(-8)}
+                                                {apiKey.apiKey.slice(0, 4)}...
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant="secondary">
-                                                    {new Date(apiKey.createdAt).toLocaleString()}
+                                                    {format(new Date(apiKey.createdAt), 'PPP')}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
@@ -189,27 +201,18 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                                                 <div className="flex space-x-2">
                                                     <Button
                                                         variant="outline"
-                                                        size="sm"
+                                                        size="icon"
                                                         onClick={() => copyToClipboard(apiKey.apiKey)}
                                                     >
                                                         <Copy className="h-4 w-4" />
                                                     </Button>
-                                                    <Protect
-                                                        role="org:admin"
-                                                        fallback={
-                                                            <>
-
-                                                            </>
-                                                        }
+                                                    <Button
+                                                        variant="outline"
+                                                        size="icon"
+                                                        onClick={() => handleEditApiKey(apiKey._id)}
                                                     >
-                                                        <Button
-                                                            variant="destructive"
-                                                            size="sm"
-                                                            onClick={() => handleDeleteApiKey(apiKey._id)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </Protect>
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -236,6 +239,14 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
 
                 </TabsContent>
             </Tabs>
+            {selectedApiKey && (
+                <EditApiKey
+                    apiKeyId={selectedApiKey}
+                    apiKeyName={apiKeys?.find(ak => ak._id === selectedApiKey)?.name ?? ''}
+                    isOpen={isEditApiKeyDialogOpen}
+                    onOpenChange={setIsEditApiKeyDialogOpen}
+                />
+            )}
         </div>
     );
 }
