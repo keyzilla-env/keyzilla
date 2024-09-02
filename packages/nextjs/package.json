@@ -1,0 +1,47 @@
+{
+  "name": "@keyzilla/nextjs",
+  "version": "0.0.2",
+  "type": "module",
+  "keywords": ["api", "keys", ".Env.local"],
+  "author": "zaluty (hamza)",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaluty/keyzilla",
+    "directory": "packages/nextjs"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./presets": {
+      "types": "./dist/presets.d.ts",
+      "default": "./dist/presets.js"
+    }
+  },
+  "files": ["dist", "package.json", "LICENSE", "README.md"],
+  "scripts": {
+    "build": "bunchee",
+    "dev": "bunchee -w --no-clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "0.11.1"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0",
+    "zod": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "bunchee": "^5.1.2",
+    "typescript": "^5.4.5",
+    "zod": "^3.23.0"
+  }
+}
