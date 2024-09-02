@@ -92,8 +92,10 @@ export default function AddProjectForm({
       console.error("Failed to create project:", error);
       if (error instanceof ConvexError) {
         setSubmitError(error.data || error.message);
+        form.setFocus("name");
       } else if (error instanceof Error) {
         setSubmitError(error.message);
+        form.setFocus("name");
       } else {
         setSubmitError("An unexpected error occurred. Please try again.");
       }

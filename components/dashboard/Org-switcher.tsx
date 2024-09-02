@@ -115,7 +115,7 @@ export const OrgSwitcher = () => {
               {mem.organization.id === organization?.id && (
                 <div className="flex items-center justify-center ml-auto">
                   <Link
-                    href={`/dashboard/org/${mem.organization.name}`}
+                    href={`/dashboard/org`}
                     className="h-4 w-4"
                     onClick={(e) => handleOrgClick(e, mem.organization.name)}
                   >

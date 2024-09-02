@@ -3,7 +3,7 @@ export const siteConfig = {
     url: "https://keyzilla.vercel.app",
     ogImage: "https://keyzilla.vercel.app/og.jpg",
     description:
-        "Secure your api keuys and gain access over them with ease",
+        "Secure your api keys and gain access over them with ease",
     links: {
         twitter: "https://twitter.com/keyzilla",
         github: "https://github.com/zaluty/keyzilla",
