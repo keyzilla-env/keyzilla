@@ -56,7 +56,6 @@ import { useRouter } from "next/navigation";
 import AddProjectForm from "./add-project-form";
 import { useState } from "react";
 import CommandShorcutsDialog from "./command-shortcuts-dialog";
-import FeedbackButton from "./feedback";
 
 export function DashboardHeader() {
   const { user } = useUser();
@@ -72,7 +71,6 @@ export function DashboardHeader() {
       </div>
       <div className="flex items-center space-x-2">
         <CommandDialogs />
-        <FeedbackButton />
         <ModeToggle />
         <Button variant="ghost" size="icon">
           <Bell className="w-5 h-5" />

@@ -21,6 +21,12 @@ export default defineSchema({
         isServer: v.optional(v.boolean()),
         createdAt: v.number(),
         updatedAt: v.number(),
+    }),
+    users: defineTable({
+        name: v.string(),
+        email: v.string(),
+        createdAt: v.number(),
+        updatedAt: v.number(),
     })
 });
 
