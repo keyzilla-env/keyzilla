@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
 
         const organizations = await clerkClient.users.getOrganizationMembershipList({ userId: user.id });
 
-        console.log("Raw organizations data:", organizations); // Add this line for debugging
 
         const orgData = organizations.data && organizations.data.length > 0
             ? organizations.data.map(org => ({

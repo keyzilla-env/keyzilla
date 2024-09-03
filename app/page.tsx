@@ -124,22 +124,26 @@ function Hero() {
 }
 
 function FLickeringBg() {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const handleResize = () => {
+    // This effect runs only on the client side
+    function handleResize() {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
-    };
+    }
+
+    // Set initial size
+    handleResize();
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Don't render anything if width is 0 (initial server-side render)
+  if (windowSize.width === 0) return null;
 
   return (
     <div className="absolute inset-0 w-full h-full bg-background overflow-hidden">
@@ -150,7 +154,7 @@ function FLickeringBg() {
         color="#6B7280"
         maxOpacity={0.5}
         flickerChance={0.1}
-        key={`${windowSize.width}-${windowSize.height}`} // Force re-render on resize
+        key={`${windowSize.width}-${windowSize.height}`}
       />
     </div>
   );
@@ -180,6 +184,7 @@ function WhatGif() {
         width={500}
         height={500}
         className="mx-auto mb-8"
+        unoptimized={true}
       />
 
       <PricingTable />

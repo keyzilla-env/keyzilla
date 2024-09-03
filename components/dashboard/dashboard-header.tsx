@@ -56,11 +56,11 @@ import { useRouter } from "next/navigation";
 import AddProjectForm from "./add-project-form";
 import { useState } from "react";
 import CommandShorcutsDialog from "./command-shortcuts-dialog";
-
+import { useClerk } from "@clerk/nextjs";
 export function DashboardHeader() {
   const { user } = useUser();
   const { organization } = useOrganization();
-
+  const { signOut } = useClerk();
   const { userMemberships, isLoaded } = useOrganizationList();
   if (!user) return null;
 
@@ -104,7 +104,7 @@ export function DropdownMenuDemo({
   const handleCommand = () => {
     setisCommanadOpen(true);
   };
-
+  const { signOut } = useClerk();
   return (
     <>
       <DropdownMenu>
@@ -167,13 +167,9 @@ export function DropdownMenuDemo({
             <span>Support</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <SignOutButton redirectUrl="/">
-              <>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </>
-            </SignOutButton>
+          <DropdownMenuItem onClick={() => signOut({ redirectUrl: "/" })}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
