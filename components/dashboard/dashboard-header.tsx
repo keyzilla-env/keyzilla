@@ -99,12 +99,18 @@ export function DropdownMenuDemo({
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [isAddProjectFormOpen, setIsAddtProjectFormOpen] = useState(false);
-  if (!isLoaded) return;
+  const { signOut } = useClerk();
+
+  if (!isLoaded) return null;
 
   const handleCommand = () => {
     setisCommanadOpen(true);
   };
-  const { signOut } = useClerk();
+
+  const handleSignOut = () => {
+    signOut({ redirectUrl: "/" });
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -167,7 +173,7 @@ export function DropdownMenuDemo({
             <span>Support</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut({ redirectUrl: "/" })}>
+          <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
