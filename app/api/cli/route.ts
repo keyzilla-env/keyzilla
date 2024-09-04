@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const email = searchParams.get('email');
-
+  
         if (!email) {
             return NextResponse.json({ error: "Email is required" }, { status: 400 });
         }
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
                 role: org.role 
             }))
             : [];
-
+       console.log(orgData);
         return NextResponse.json({
             userId: user.id,
             email: user.emailAddresses[0]?.emailAddress || null,

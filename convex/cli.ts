@@ -43,3 +43,55 @@ export const getApiKeys = query({
 
 
 
+export const getCliProjects = query({
+    args: { userId: v.string(), organizationId: v.optional(v.string()) },
+    handler: async (ctx, args) => {
+        console.log("getCliProjects called with:", args);
+        if (!args.userId) {
+            console.log("No userId provided, returning empty array");
+            return [];
+        }
+        const projects = await ctx.db
+            .query("projects")
+            .filter((q) => {
+                if (args.organizationId) {
+                    return q.eq(q.field("organizationId"), args.organizationId);
+                } else {
+                    return q.and(
+                        q.eq(q.field("userId"), args.userId),
+                        q.or(
+                            q.eq(q.field("organizationId"), args.organizationId),
+                            q.eq(q.field("organizationId"), null)
+                        )
+                    );
+                }
+            }).order("desc")
+            .collect();
+        console.log("Projects found:", projects);
+        return projects;
+    },
+})
+
+export const verify = query({
+    args: { secretKey: v.string(), userId: v.string() },
+    handler: async (ctx, args) => {
+        if (!args.secretKey || !args.userId) {
+            throw new Error("Secret key and userId are required");
+        }
+
+        // Query the user from the database
+        const user = await ctx.db
+            .query("secrets")
+            .filter((q) => q.eq(q.field("userId"), args.userId))
+            .first();
+
+        if (!user) {
+            return false; // User not found
+        }
+
+        // Check if the provided secret key matches the user's stored secret key
+        const isSecretKeyValid = user.secret === args.secretKey;
+    console.log(isSecretKeyValid);
+        return isSecretKeyValid;
+    }
+});

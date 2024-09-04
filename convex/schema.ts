@@ -22,9 +22,11 @@ export default defineSchema({
         createdAt: v.number(),
         updatedAt: v.number(),
     }),
-    users: defineTable({
+    secrets: defineTable({
+        userId: v.string(),
         name: v.string(),
         email: v.string(),
+        secret: v.string(),
         createdAt: v.number(),
         updatedAt: v.number(),
     })
