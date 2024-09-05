@@ -41,8 +41,6 @@ export const getApiKeys = query({
     }
 });
 
-
-
 export const getCliProjects = query({
     args: { userId: v.string(), organizationId: v.optional(v.string()) },
     handler: async (ctx, args) => {
@@ -67,10 +65,20 @@ export const getCliProjects = query({
                 }
             }).order("desc")
             .collect();
-        console.log("Projects found:", projects);
-        return projects;
+
+        // Fetch API keys for each project
+        const projectsWithApiKeys = await Promise.all(projects.map(async (project) => {
+            const apiKeys = await ctx.db
+                .query("apiKeys")
+                .filter((q) => q.eq(q.field("projectId"), project._id))
+                .collect();
+            return { ...project, apiKeys };
+        }));
+
+        console.log("Projects with API keys found:", projectsWithApiKeys);
+        return projectsWithApiKeys;
     },
-})
+});
 
 export const verify = query({
     args: { secretKey: v.string(), userId: v.string() },
