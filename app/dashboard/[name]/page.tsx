@@ -19,15 +19,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Code, Copy, Info, Key, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import React from "react";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import Settings from "@/components/dashboard/project/settings";
 import { AddApiKey } from "@/components/dashboard/add-api-key";
 import { useSearchParams } from "next/navigation";
-import { UsageChart } from "@/components/dashboard/project/usage-chart";
+import UsageChart from "@/components/dashboard/project/usage-chart";
 import EditApiKey from "@/components/dashboard/edit-api-key";
 import { format } from "date-fns";
 import ImportantNotice from "@/components/dashboard/important-notice";
-
+import Link from "next/link";
+import { ContactForm } from "@/components/contact";
+import { useUser } from "@clerk/nextjs";
+import { z } from "zod";
 export const dynamic = "force-dynamic";
 
 export default function ProjectPage({ params }: { params: { name: string } }) {
@@ -39,7 +42,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
     null
   );
   const searchParams = useSearchParams();
-
+  const { user } = useUser();
   const project = useQuery(api.projects.getProjectByName, {
     name: decodeURIComponent(params.name),
     organizationId: organization?.id || "",
@@ -72,7 +75,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
   }
 
   if (project === null) {
-    return <div>Project not found</div>;
+    return <NotFound name={params.name} />;
   }
 
   const handleCreateApiKey = async () => {
@@ -109,7 +112,6 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
     setIsEditApiKeyDialogOpen(true);
   };
 
-  console.log(project);
   return (
     <div className="container mx-auto py-8 space-y-8">
       <Card className="bg-card text-card-foreground">
@@ -179,7 +181,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
                   <TableRow>
                     <TableHead>API Key</TableHead>
                     <TableHead>Created At</TableHead>
-                    <TableHead> Key Type </TableHead>
+                    <TableHead> Key Environment </TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -245,14 +247,7 @@ export default function ProjectPage({ params }: { params: { name: string } }) {
           </Card>
         </TabsContent>
         <TabsContent value="usage">
-          <Card>
-            <CardHeader>
-              <CardTitle>Usage Statistics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <UsageChart />
-            </CardContent>
-          </Card>
+          <UsageChart />
         </TabsContent>
         <TabsContent value="settings">
           <Settings project={project} />
@@ -282,5 +277,22 @@ function ProjectSkeleton() {
         <Skeleton className="h-64 w-full" />
       </div>
     </div>
+  );
+}
+
+function NotFound({ name }: { name: string }) {
+  return (
+    <Card className="bg-card text-card-foreground w-1/2 mx-auto mt-16">
+      <CardHeader>
+        <CardTitle>Project not found</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>
+          The project <span className="font-bold underline">{name}</span> you
+          are looking for does not exist. or has been deleted.
+        </p>
+        <p className="text-4xl font-bold text-center">404</p>
+      </CardContent>
+    </Card>
   );
 }

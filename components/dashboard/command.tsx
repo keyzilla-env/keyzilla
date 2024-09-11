@@ -17,6 +17,7 @@ import {
   Key,
   HelpCircle,
   Code,
+  MessageCircle,
 } from "lucide-react";
 
 import {
@@ -34,6 +35,7 @@ import { useRouter } from "next/navigation";
 import {
   Protect,
   SignOutButton,
+  useAuth,
   useOrganization,
   useUser,
 } from "@clerk/nextjs";
@@ -42,12 +44,14 @@ import { api } from "@/convex/_generated/api";
 import { AddApiKey } from "./add-api-key";
 import AddProjectForm from "./add-project-form";
 import { useParams } from "next/navigation";
+import Feedback from "../feedback";
 
 export function CommandDialogs() {
   const [open, setOpen] = React.useState(false);
   const { setTheme, theme } = useTheme();
+  const { signOut } = useAuth();
   const router = useRouter();
-  const { user } = useUser();
+  const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
   const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] =
     React.useState(false);
   const [isAddApiKeyDialogOpen, setIsAddApiKeyDialogOpen] =
@@ -84,6 +88,14 @@ export function CommandDialogs() {
     setIsAddApiKeyDialogOpen(true);
   };
 
+  const handleFeedback = () => {
+    setOpen(false);
+    setIsFeedbackOpen(true);
+  };
+  const handleSignOut = () => {
+    signOut();
+    router.push("/");
+  };
   return (
     <>
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -149,6 +161,10 @@ export function CommandDialogs() {
                 <Code className="mr-2 h-4 w-4" />
                 <span>Add API Key</span>
               </CommandItem>
+              <CommandItem onSelect={handleFeedback}>
+                <MessageCircle className="mr-2 h-4 w-4" />
+                <span>Feedback</span>
+              </CommandItem>
             </Protect>
             <CommandItem onSelect={toggleTheme}>
               {theme === "light" ? (
@@ -184,8 +200,9 @@ export function CommandDialogs() {
               <HelpCircle className="mr-2 h-4 w-4" />
               <span>Support</span>
             </CommandItem>
-            <CommandItem>
-              <Logout />
+            <CommandItem onSelect={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sign Out</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
@@ -203,17 +220,10 @@ export function CommandDialogs() {
       >
         <></>
       </AddApiKey>
+      <Feedback
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+      />
     </>
-  );
-}
-
-function Logout() {
-  return (
-    <SignOutButton redirectUrl="/">
-      <>
-        <LogOut className="mr-2 h-4 w-4" />
-        <span>Sign Out</span>
-      </>
-    </SignOutButton>
   );
 }

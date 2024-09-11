@@ -13,19 +13,7 @@ Sentry.init({
       maskAllText: true,
       blockAllMedia: false,
     }),
-    Sentry.feedbackIntegration({
-      colorScheme: "light",
-      maskAllText: true,
-      debug: true,
-      submitButtonText: "Submit Feedback",
-      closeButtonText: "Close",
-      emailPlaceholder: "Your email address",
-      messagePlaceholder: "Your feedback message",
-      title: "Provide Feedback",
-      subtitle: "Help us improve Keyzilla",
-      successMessage: "Thank you for your feedback!",
-      errorMessage: "An error occurred while submitting your feedback.",
-    }),
+ 
      
   ],
 

@@ -12,7 +12,6 @@ export default defineSchema({
         organizationId: v.optional(v.string()),
         userProfile: v.optional(v.string()),
         userName: v.optional(v.string()),
-        isPublic: v.optional(v.boolean()),
     }),
     apiKeys: defineTable({
         projectId: v.id("projects"),

@@ -106,7 +106,7 @@ export default function CreateOrganization() {
           </form>
         ) : (
           <>
-            <InviteMember />
+            <InviteMember open={isOpen} setOpen={setIsOpen} />
             <div className="flex justify-end mt-4">
               <Button onClick={handleClose}>Done</Button>
             </div>

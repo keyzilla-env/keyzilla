@@ -44,9 +44,7 @@ export const getApiKeys = query({
 export const getCliProjects = query({
     args: { userId: v.string(), organizationId: v.optional(v.string()) },
     handler: async (ctx, args) => {
-        console.log("getCliProjects called with:", args);
         if (!args.userId) {
-            console.log("No userId provided, returning empty array");
             return [];
         }
         const projects = await ctx.db
@@ -75,7 +73,6 @@ export const getCliProjects = query({
             return { ...project, apiKeys };
         }));
 
-        console.log("Projects with API keys found:", projectsWithApiKeys);
         return projectsWithApiKeys;
     },
 });

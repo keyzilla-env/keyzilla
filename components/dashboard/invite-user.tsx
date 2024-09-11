@@ -60,7 +60,15 @@ export const OrgInvitationsParams = {
 };
 
 // Form to invite a new member to the organization.
-export const InviteMember = () => {
+interface InviteMemberProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export const InviteMember: React.FC<InviteMemberProps> = ({
+  open,
+  setOpen,
+}) => {
   const { isLoaded, organization, invitations } =
     useOrganization(OrgInvitationsParams);
   const [disabled, setDisabled] = useState(false);
@@ -95,10 +103,7 @@ export const InviteMember = () => {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Invite Member</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Invite a New Member</DialogTitle>

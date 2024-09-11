@@ -23,12 +23,20 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { getProjects } from "@/convex/projects";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { InviteMember } from "@/components/dashboard/invite-user";
+import { PlusIcon, UserPlusIcon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 export default function DashboardPage() {
   const { organization } = useOrganization();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isInviteUsersDialogOpen, setIsInviteUsersDialogOpen] = useState(false);
   const ITEMS_PER_PAGE = 9;
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
@@ -95,9 +103,11 @@ export default function DashboardPage() {
           }
           fallback={<></>}
         >
-          <Button onClick={() => setIsAddProjectDialogOpen(true)}>
-            Add Project
-          </Button>
+          <PopoverDemo
+            open={setIsAddProjectDialogOpen}
+            inviteUsers={setIsInviteUsersDialogOpen}
+            organization={organization as Organization}
+          />
 
           <AddProjectForm
             isOpen={isAddProjectDialogOpen}
@@ -191,14 +201,66 @@ export default function DashboardPage() {
           </Protect>
         )}
       </div>
+      <InviteMember
+        open={isInviteUsersDialogOpen}
+        setOpen={setIsInviteUsersDialogOpen}
+      />
     </div>
   );
 }
-
+type Organization = {
+  id: string;
+  name: string;
+};
 function Fallback() {
   return (
     <div className="text-center">
       Your organization does not have any projects yet.
     </div>
+  );
+}
+function PopoverDemo({
+  open,
+  inviteUsers,
+  organization,
+}: {
+  open: (open: boolean) => void;
+  inviteUsers: (open: boolean) => void;
+  organization: Organization;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="flex items-center space-x-2">
+          <span>Add</span>
+          <PlusIcon className="w-5 h-5" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-44 shadow-lg rounded-lg max-w-xs">
+        <div className="flex flex-col items-center space-y-2">
+          <Button
+            variant="default"
+            className="w-full flex items-center space-x-2"
+            onClick={() => open(true)}
+          >
+            <PlusIcon className="w-5 h-5" />
+            <span>Add Project</span>
+          </Button>
+          {organization && (
+            <>
+              <Separator className="w-full" />
+              <Button
+                variant="default"
+                className="w-full flex items-center space-x-2"
+                onClick={() => inviteUsers(true)}
+              >
+                <UserPlusIcon className="w-5 h-5" />
+                <span>Invite Users</span>
+              </Button>
+            </>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

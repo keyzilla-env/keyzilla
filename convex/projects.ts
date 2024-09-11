@@ -127,7 +127,6 @@ export const getProjectByName = query({
 
         let project;
         if (args.organizationId) {
-            console.log("Searching for org project");
             project = await ctx.db
                 .query("projects")
                 .filter((q) =>
@@ -148,7 +147,6 @@ export const getProjectByName = query({
                 )
                 .first();
         }
-        console.log("Found project:", project);
         return project;
     }
 })
@@ -182,7 +180,6 @@ export const updateProject = mutation({
 
         if (args.name !== undefined) updatedFields.name = args.name;
         if (args.description !== undefined) updatedFields.description = args.description;
-        if (args.isPublic !== undefined) updatedFields.isPublic = args.isPublic;
 
         const updatedProject = await ctx.db.patch(args.id, updatedFields);
 

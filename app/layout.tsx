@@ -6,6 +6,7 @@ import ModeToggle from "@/components/theme-toggle";
 import { ConvexClientProvider } from "@/lib/covex-client";
 import { ClerkProvider } from "@clerk/nextjs";
 import { siteConfig } from "@/config/site";
+import TopLoader from "@/components/topLoader";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -74,6 +75,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
+              <TopLoader />
               {children}
             </ThemeProvider>
           </body>

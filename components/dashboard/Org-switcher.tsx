@@ -37,11 +37,11 @@ export const OrgSwitcher = () => {
       </div>
     );
   }
-  const handleOrgClick = (e: React.MouseEvent, orgName: string) => {
+  const handleOrgClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setOpen(false);
-    router.push(`/dashboard/org/${orgName}`);
+    router.push(`/dashboard/org/`);
   };
 
   return (
@@ -117,7 +117,7 @@ export const OrgSwitcher = () => {
                   <Link
                     href={`/dashboard/org`}
                     className="h-4 w-4"
-                    onClick={(e) => handleOrgClick(e, mem.organization.name)}
+                    onClick={(e) => handleOrgClick(e)}
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Link>

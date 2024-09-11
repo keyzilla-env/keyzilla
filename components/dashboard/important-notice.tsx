@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import Image from "next/image";
+import { Button } from "../ui/button";
 
 export default function ImportantNotice() {
   const { organization } = useOrganization();
@@ -42,8 +43,10 @@ export default function ImportantNotice() {
                   : "You are not in an organization"}
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter></DialogFooter>
-            <InviteMember />
+            <DialogFooter>
+              <Button onClick={() => setOpen(true)}>Invite Member</Button>
+            </DialogFooter>
+            <InviteMember open={open} setOpen={setOpen} />
           </DialogContent>
         </Dialog>
       </Protect>

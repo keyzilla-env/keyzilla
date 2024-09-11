@@ -13,7 +13,15 @@ import AddProjectForm from "./add-project-form";
 import { format } from "date-fns";
 import { formatDistanceToNow } from "date-fns";
 import { Code, Key } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -83,9 +91,7 @@ function ProjectCard({ project }: ProjectCardProps) {
         fallback={<></>}
       >
         <div className="flex items-center justify-center gap-4">
-          <Button onClick={() => setIsAddProjectDialogOpen(true)}>
-            Add Project
-          </Button>
+          <PopoverDemo />
           <AddProjectForm
             isOpen={isAddProjectDialogOpen}
             onClose={() => setIsAddProjectDialogOpen(false)}
@@ -206,5 +212,22 @@ function ApiKeyCount({ count }: { count: number }) {
       <Code className="w-4 h-4" />
       <span>{count}</span>
     </>
+  );
+}
+
+export function PopoverDemo() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Open popover</Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-4">
+        <div className="flex justify-around">
+          <Button variant="outline">Button 1</Button>
+          <Button variant="outline">Button 2</Button>
+          <Button variant="outline">Button 3</Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

@@ -91,7 +91,6 @@ export default function CliPage() {
 
     try {
       const response = await axios.get(`/api/cli?email=${data.email}`);
-      console.log(response.data);
 
       // Update requests in localStorage
       localStorage.setItem(
