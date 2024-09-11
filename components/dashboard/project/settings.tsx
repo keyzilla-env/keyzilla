@@ -31,12 +31,10 @@ export default function Settings(props: { project: Doc<"projects"> }) {
   const [projectDescription, setProjectDescription] = useState(
     project.description
   );
-  const [isPublic, setIsPublic] = useState(project.isPublic || false);
 
   const isChanged =
     projectName.trim() !== project.name.trim() ||
-    projectDescription.trim() !== project.description.trim() ||
-    isPublic !== (project.isPublic || false);
+    projectDescription.trim() !== project.description.trim();
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -58,7 +56,6 @@ export default function Settings(props: { project: Doc<"projects"> }) {
         id: project._id,
         name: projectName.trim(),
         description: projectDescription.trim(),
-        isPublic: isPublic,
       });
       toast.success("Project updated successfully");
     } catch (error) {

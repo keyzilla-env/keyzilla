@@ -71,40 +71,7 @@ export function DashboardHeader() {
       </div>
       <div className="flex items-center space-x-2">
         <CommandDialogs />
-        <Popover open={isNotificationOpen} onOpenChange={setIsNotificationOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {unreadNotificationsCount + 2}
-              </span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="absolute top-0 right-0 mt-2 w-64 bg-popover text-popover-foreground shadow-lg rounded-lg p-4">
-            <div className="text-lg font-semibold mb-2">Notifications</div>
-            <div className="max-h-60 overflow-y-auto">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="p-2 border-b last:border-b-0 border-border"
-                >
-                  <div className="font-medium">{notification.title}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {new Date(notification.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 text-center">
-              <Link
-                href="/notifications"
-                className="text-primary-foreground hover:underline"
-              >
-                View all notifications
-              </Link>
-            </div>
-          </PopoverContent>
-        </Popover>
+
         <Avatar className="cursor-pointer">
           <DropdownMenuDemo>
             <Avatar title={user.fullName!}>
