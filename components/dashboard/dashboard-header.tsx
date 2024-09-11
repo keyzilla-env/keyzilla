@@ -53,10 +53,6 @@ import { useClerk } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import Feedback from "../feedback";
 import { useTheme } from "next-themes";
-import { notifications } from "@/notifications.json";
-
-// Calculate unread notifications
-const unreadNotificationsCount = notifications.length; // Adjust this logic based on your actual unread criteria
 
 export function DashboardHeader() {
   const { user, isLoaded: isUserLoaded } = useUser();

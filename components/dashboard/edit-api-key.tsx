@@ -36,8 +36,10 @@ import { AlertCircle, Info } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Protect, useOrganization } from "@clerk/nextjs";
 const formSchema = z.object({
-  apiKeyValue: z.string().min(1, "API Key is required"),
-  isServer: z.boolean(),
+  apiKeyValue: z.string().optional(),
+  name: z.string().optional(),
+  isServer: z.boolean().optional(),
+  apiKeyName: z.string().optional(),
 });
 
 export default function EditApiKey({
@@ -80,7 +82,7 @@ export default function EditApiKey({
     try {
       await updateApiKey({
         apiKeyId,
-        value: values.apiKeyValue,
+        value: values.apiKeyValue || "",
         isServer: values.isServer,
       });
       toast.success("API Key updated successfully");
@@ -105,6 +107,25 @@ export default function EditApiKey({
           >
             <FormField
               control={form.control}
+              name="apiKeyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    API Key Name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Enter new API key name"
+                      className="mt-1"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="apiKeyValue"
               render={({ field }) => (
                 <FormItem>
@@ -125,23 +146,25 @@ export default function EditApiKey({
               name="isServer"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-between space-x-2">
                     <FormLabel className="text-sm font-medium">
                       Server Key
                     </FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <SwitchTooltip />
+                    <div className="flex items-center space-x-2 ml-auto">
+                      <SwitchTooltip />
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </div>
                   </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-fulle">
+            <Button type="submit" className="w-full mt-4">
               Update API Key
             </Button>
           </form>
@@ -150,8 +173,7 @@ export default function EditApiKey({
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Danger Zone</AlertTitle>
           <AlertDescription>
-            Deleting this project will permanently remove all the following api
-            key
+            Deleting this API Key will permanently remove it.
             {apiKeyName}
             <div className="mt-3 flex justify-end items-end">
               <Button
@@ -159,7 +181,7 @@ export default function EditApiKey({
                 onClick={handleDeleteApiKey}
                 disabled={isDeleting}
               >
-                {isDeleting ? "Deleting..." : "Delete Project"}
+                {isDeleting ? "Deleting..." : "Delete API Key"}
               </Button>
             </div>
           </AlertDescription>
