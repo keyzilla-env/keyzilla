@@ -29,6 +29,7 @@ export const OrgSwitcher = () => {
   const { user } = useUser();
   const { organization } = useOrganization();
   const [open, setOpen] = useState(false);
+  const [createOrg, setCreateOrg] = useState(false);
   const router = useRouter();
   if (!isLoaded || !user) {
     return (
@@ -129,7 +130,7 @@ export const OrgSwitcher = () => {
         <Link
           href="/dashboard"
           onClick={() => setOpen(false)}
-          className="flex items-center justify-center w-full p-2 text-sm text-muted-foreground"
+          className="flex items-center justify-center w-full    p-2 text-sm text-muted-foreground"
         >
           Return to Dashboard
         </Link>
@@ -143,7 +144,15 @@ export const OrgSwitcher = () => {
             Load more organizations
           </Button>
         )}
-        <CreateOrganization />
+        <Button
+          onClick={() => {
+            setCreateOrg(true);
+          }}
+          className="my-4  mx-4"
+        >
+          Create Organization
+        </Button>
+        <CreateOrganization open={createOrg} setOpen={setCreateOrg} />
       </PopoverContent>
     </Popover>
   );

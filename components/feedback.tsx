@@ -34,21 +34,33 @@ export default function Feedback({ isOpen, onClose }: FeedbackProps) {
     const feedback = formData.get("feedback") as string | null;
     if (!feedback) {
       toast({
-        title: "Feedback is required",
+        title: "Feedback is missing",
         variant: "destructive",
       });
-      return; // Add return to prevent further execution
+      return;
     }
-    Sentry.captureFeedback({
-      url: path,
-      message: feedback,
-      email: email?.emailAddress ?? undefined,
-      name: user?.fullName ?? undefined,
-    });
-    toast({
-      title: "Feedback submitted",
-      description: "Thank you for your feedback!",
-    });
+    try {
+      const result = await Sentry.captureFeedback({
+        url: path,
+        message: feedback,
+        email: email?.emailAddress ?? undefined,
+        name: user?.fullName ?? undefined,
+      });
+      if (result) {
+        toast({
+          title: "Feedback submitted",
+          description: "Thank you for your feedback!",
+        });
+      } else {
+        throw new Error("Feedback not sent");
+      }
+    } catch (error) {
+      toast({
+        title: "Error submitting feedback",
+        description: "Please disable your adblocker and try again.",
+        variant: "destructive",
+      });
+    }
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

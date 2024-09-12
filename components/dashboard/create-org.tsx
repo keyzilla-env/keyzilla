@@ -16,11 +16,15 @@ import { Loader2, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { InviteMember } from "./invite-user";
 
-export default function CreateOrganization() {
+type createOrgProps = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export default function CreateOrganization({ open, setOpen }: createOrgProps) {
   const { createOrganization, userMemberships } = useOrganizationList();
   const [organizationName, setOrganizationName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [hasOrganization, setHasOrganization] = useState(false);
   const router = useRouter();
@@ -46,29 +50,13 @@ export default function CreateOrganization() {
   };
 
   const handleClose = () => {
-    setIsOpen(false);
     setShowInvite(false);
     setOrganizationName("");
     router.refresh();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="default"
-          className="my-4 ml-2"
-          disabled={hasOrganization}
-          title={
-            hasOrganization
-              ? "You can only create one organization"
-              : "Create Organization"
-          }
-        >
-          <PlusIcon className="w-4 h-4" />
-          Create Organization
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -106,7 +94,7 @@ export default function CreateOrganization() {
           </form>
         ) : (
           <>
-            <InviteMember open={isOpen} setOpen={setIsOpen} />
+            <InviteMember open={open} setOpen={setOpen} />
             <div className="flex justify-end mt-4">
               <Button onClick={handleClose}>Done</Button>
             </div>

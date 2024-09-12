@@ -18,6 +18,8 @@ import {
   HelpCircle,
   Code,
   MessageCircle,
+  Building2,
+  User2Icon,
 } from "lucide-react";
 
 import {
@@ -45,9 +47,11 @@ import { AddApiKey } from "./add-api-key";
 import AddProjectForm from "./add-project-form";
 import { useParams } from "next/navigation";
 import Feedback from "../feedback";
+import CreateOrganization from "./create-org";
 
 export function CommandDialogs() {
   const [open, setOpen] = React.useState(false);
+  const [createOrg, setCreateOrg] = React.useState(false);
   const { setTheme, theme } = useTheme();
   const { signOut } = useAuth();
   const router = useRouter();
@@ -94,6 +98,11 @@ export function CommandDialogs() {
   };
   const handleSignOut = () => {
     signOut();
+    router.push("/");
+  };
+  const handleCreateOrg = () => {
+    setOpen(false);
+    setCreateOrg(true);
     router.push("/");
   };
   return (
@@ -161,11 +170,29 @@ export function CommandDialogs() {
                 <Code className="mr-2 h-4 w-4" />
                 <span>Add API Key</span>
               </CommandItem>
-              <CommandItem onSelect={handleFeedback}>
-                <MessageCircle className="mr-2 h-4 w-4" />
-                <span>Feedback</span>
-              </CommandItem>
+
+              <Protect
+                condition={(has) =>
+                  has({ permission: "org:sys_memberships:manage" }) ||
+                  !organization
+                }
+                fallback={<></>}
+              >
+                <CommandItem>
+                  <User2Icon className="mr-2 h-4 w-4" />
+                  <span>Invite users</span>
+                </CommandItem>
+              </Protect>
             </Protect>
+
+            <CommandItem onSelect={handleFeedback}>
+              <MessageCircle className="mr-2 h-4 w-4" />
+              <span>Feedback</span>
+            </CommandItem>
+            <CommandItem onSelect={handleCreateOrg}>
+              <Building2 className="mr-2 h-4 w-4" />
+              <span>Create organization</span>
+            </CommandItem>
             <CommandItem onSelect={toggleTheme}>
               {theme === "light" ? (
                 <Moon className="mr-2 h-4 w-4" />
@@ -207,7 +234,6 @@ export function CommandDialogs() {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
-      {/* You would need to implement AddProjectForm and AddApiKeyForm components */}
       <AddProjectForm
         isOpen={isAddProjectDialogOpen}
         onClose={() => setIsAddProjectDialogOpen(false)}
@@ -220,6 +246,7 @@ export function CommandDialogs() {
       >
         <></>
       </AddApiKey>
+      <CreateOrganization open={createOrg} setOpen={setCreateOrg} />
       <Feedback
         isOpen={isFeedbackOpen}
         onClose={() => setIsFeedbackOpen(false)}
